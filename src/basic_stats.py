@@ -18,3 +18,14 @@ for i in range(len(data)):
         words = words + 1
 
 print("Number of words:", words)
+
+data_lower = data.lower()
+data_split = data_lower.split()
+
+tokens = []
+for word in data_lower.split():
+    cleaned = word.strip('.,!?";:()[]{}')
+    if cleaned:
+        tokens.append(cleaned)
+
+print("Processed words list:", tokens)
