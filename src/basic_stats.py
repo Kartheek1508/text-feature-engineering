@@ -1,7 +1,12 @@
 import os
 from collections import Counter
 
-with open(r'/Users/bnskartheek/Programming/text_feature_eng/text-feature-engineering/data/test.txt', 'r') as f:
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+DATA_PATH = os.path.join(BASE_DIR, 'data', 'test.txt')
+
+with open(DATA_PATH, 'r') as f:
     data = f.read()
     print("Length of data:", len(data))
     print("Raw data repr:", repr(data))
@@ -34,3 +39,11 @@ print("Processed words list:", tokens)
 
 c = Counter(tokens)
 print("Word frequencies:", c)
+
+tf = {}
+for words in c:
+    tf[words] = c[words]/len(tokens)
+
+for word in tf:
+    print(f"{word}: TF = {tf[word]:.4f}")
+
