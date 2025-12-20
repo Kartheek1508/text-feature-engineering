@@ -1,4 +1,5 @@
 import os
+from collections import Counter
 
 with open(r'/Users/bnskartheek/Programming/text_feature_eng/text-feature-engineering/data/test.txt', 'r') as f:
     data = f.read()
@@ -29,3 +30,7 @@ for word in data_lower.split():
         tokens.append(cleaned)
 
 print("Processed words list:", tokens)
+
+
+c = Counter(tokens)
+print("Word frequencies:", c)
