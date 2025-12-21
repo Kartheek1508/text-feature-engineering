@@ -4,7 +4,7 @@ from idf import compute_idf
 from tf_idf import compute_tf_idf
 from stats import compute_stats
 from vectorizer import vectorize
-import math
+from similarity import cosine_similarity
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -77,15 +77,6 @@ v1 = vectorize(tf_idf_value1, vocab)
 v2 = vectorize(tf_idf_value2, vocab)
 v3 = vectorize(tf_idf_value3, vocab)
 
-def cosine_similarity(vec1, vec2):
-    dot_product = sum(a * b for a, b in zip(vec1, vec2))
-    magnitude1 = math.sqrt(sum(a * a for a in vec1))
-    magnitude2 = math.sqrt(sum(b * b for b in vec2))
-
-    if magnitude1 == 0 or magnitude2 == 0:
-        return 0.0
-
-    return dot_product / (magnitude1 * magnitude2)
 print("\n")
 print("Cosine similarity(Doc1 VS Doc2) : ",cosine_similarity(v1,v2))
 print("Cosine similarity(Doc2 VS Doc3) : ",cosine_similarity(v2,v3))
