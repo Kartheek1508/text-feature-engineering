@@ -2,6 +2,7 @@ from tokenizer import tokenize
 from tf import tf
 from idf import compute_idf
 from tf_idf import compute_tf_idf
+from stats import compute_stats
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -46,7 +47,12 @@ idf = compute_idf(token_list)
 print("IDF values : \n",idf)
 
 tf_idf_values = compute_tf_idf(token_frequency1,idf)
-
 print("\n")
 print("TF IDF Values : ",tf_idf_values)
 
+
+stats_doc1 = compute_stats(tokens1)
+stats_doc2 = compute_stats(tokens2)
+stats_doc3 = compute_stats(tokens3)
+
+print(stats_doc1)
