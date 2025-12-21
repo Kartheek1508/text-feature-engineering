@@ -1,0 +1,4 @@
+Machine learning uses data to train models.
+Python is widely used in machine learning.
+Learning algorithms find patterns in data.
+Data and models are central to machine learning.

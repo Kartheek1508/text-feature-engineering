@@ -1,0 +1,4 @@
+Python is a popular programming language.
+Python is easy to learn and easy to read.
+Many beginners start programming with Python.
+Programming in Python is fun and powerful.
