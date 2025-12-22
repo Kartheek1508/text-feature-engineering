@@ -14,7 +14,7 @@ DATA_PATH3 = os.path.join(BASE_DIR, 'data', 'doc3.txt')
 
 with open(DATA_PATH1,'r') as f:
     data1 = f.read()
-
+  
 #data 1
 tokens1 = tokenize(data1)
 print("Tokens : \n",tokens1)
@@ -73,14 +73,14 @@ def build_vocab(tfidf_dicts):
 vocab = build_vocab([tf_idf_value1,tf_idf_value2,tf_idf_value3])
 
 
-v1 = vectorize(tf_idf_value1, vocab)
-v2 = vectorize(tf_idf_value2, vocab)
-v3 = vectorize(tf_idf_value3, vocab)
+tfidf_vec1 = vectorize(tf_idf_value1, vocab)
+tfidf_vec2 = vectorize(tf_idf_value2, vocab)
+tfidf_vec3 = vectorize(tf_idf_value3, vocab)
 
 print("\n")
-print("Cosine similarity(Doc1 VS Doc2) : ",cosine_similarity(v1,v2))
-print("Cosine similarity(Doc2 VS Doc3) : ",cosine_similarity(v2,v3))
-print("Cosine similarity(Doc1 VS Doc3) : ",cosine_similarity(v1,v3))
+print("Cosine similarity(Doc1 VS Doc2) : ",cosine_similarity(tfidf_vec1,tfidf_vec2))
+print("Cosine similarity(Doc2 VS Doc3) : ",cosine_similarity(tfidf_vec2,tfidf_vec3))
+print("Cosine similarity(Doc1 VS Doc3) : ",cosine_similarity(tfidf_vec1,tfidf_vec3))
 
 
 documents = {
@@ -103,7 +103,7 @@ query_tf = tf(query_tokens)
 query_tfidf = compute_tf_idf(query_tf, idf)
 query_vector = vectorize(query_tfidf, vocab)
 
-#ranking the documents
+#ranking the documents for a qurey
 
 scores = []
 values = doc_vectors
@@ -117,3 +117,38 @@ print("Query:", query)
 print("\nRanked results:")
 for name,score in scores:
     print(f"{name} → {score:.4f}")
+
+
+#
+
+
+#making stats vector
+
+stats_vec1 = [stats_doc1["num_tokens"],stats_doc1["vocab_size"],stats_doc1["avg_word_length"],stats_doc1["lexical_diversity"]]
+stats_vec2 = [stats_doc2["num_tokens"],stats_doc2["vocab_size"],stats_doc2["avg_word_length"],stats_doc2["lexical_diversity"]]
+stats_vec3 = [stats_doc3["num_tokens"],stats_doc3["vocab_size"],stats_doc3["avg_word_length"],stats_doc3["lexical_diversity"]]
+#unified_vec1 = vectorize([tf_idf_value1,tf_idf_value2,tf_idf_value3,stats_doc1["num_tokens"],stats_doc1["vocab_size"],stats_doc1["avg_word_length"],stats_doc1["lexical_diversity"]],vocab)
+#unified_vec2 = [tf_idf_value1,tf_idf_value2,tf_idf_value3,stats_doc2["num_tokens"],stats_doc2["vocab_size"],stats_doc2["avg_word_length"],stats_doc2["lexical_diversity"]]
+#unified_vec3 = [tf_idf_value1,tf_idf_value2,tf_idf_value3,stats_doc3["num_tokens"],stats_doc3["vocab_size"],stats_doc3["avg_word_length"],stats_doc3["lexical_diversity"]]
+#print(unified_vec1)
+unified_vec1 = tfidf_vec1 + stats_vec1
+unified_vec2 = tfidf_vec2 + stats_vec2
+unified_vec3 = tfidf_vec3 + stats_vec3
+
+query_stats = compute_stats(query_tokens)
+qurey_stats_vec = [query_stats["num_tokens"],query_stats["vocab_size"],query_stats["avg_word_length"],query_stats["lexical_diversity"]]
+
+unified_qurey_vec = query_vector + qurey_stats_vec
+
+unified_scores = [cosine_similarity(unified_qurey_vec,unified_vec1)
+,cosine_similarity(unified_qurey_vec,unified_vec2)
+,cosine_similarity(unified_qurey_vec,unified_vec3)
+]
+
+#sorted_unified_scores = sorted(unified_scores,reverse=True)
+
+doc = 0
+for unified_score in unified_scores:
+        print(f"doc{doc+1} -> {unified_score}")
+        doc = doc+1
+        
