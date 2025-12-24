@@ -5,6 +5,7 @@ from tf_idf import compute_tf_idf
 from stats import compute_stats
 from vectorizer import vectorize
 from similarity import cosine_similarity
+from normalizer import compute_min_max, normalize_stats
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -61,6 +62,7 @@ print("TF IDF Values : ",tf_idf_value3)
 stats_doc1 = compute_stats(tokens1)
 stats_doc2 = compute_stats(tokens2)
 stats_doc3 = compute_stats(tokens3)
+
 
 print(stats_doc1)
 
@@ -136,9 +138,9 @@ unified_vec2 = tfidf_vec2 + stats_vec2
 unified_vec3 = tfidf_vec3 + stats_vec3
 
 query_stats = compute_stats(query_tokens)
-qurey_stats_vec = [query_stats["num_tokens"],query_stats["vocab_size"],query_stats["avg_word_length"],query_stats["lexical_diversity"]]
+query_stats_vec = [query_stats["num_tokens"],query_stats["vocab_size"],query_stats["avg_word_length"],query_stats["lexical_diversity"]]
 
-unified_qurey_vec = query_vector + qurey_stats_vec
+unified_qurey_vec = query_vector + query_stats_vec
 
 unified_scores = [cosine_similarity(unified_qurey_vec,unified_vec1)
 ,cosine_similarity(unified_qurey_vec,unified_vec2)
@@ -147,8 +149,65 @@ unified_scores = [cosine_similarity(unified_qurey_vec,unified_vec1)
 
 #sorted_unified_scores = sorted(unified_scores,reverse=True)
 
+print("\n")
+print("ranking files based on qurey")
+
 doc = 0
 for unified_score in unified_scores:
         print(f"doc{doc+1} -> {unified_score}")
         doc = doc+1
-        
+
+
+all_stats = [stats_doc1,stats_doc2,stats_doc3]
+
+min_max = compute_min_max(all_stats)
+
+norm_stats_doc1 = normalize_stats(stats_doc1,min_max)
+norm_stats_doc2 = normalize_stats(stats_doc2,min_max)
+norm_stats_doc3 = normalize_stats(stats_doc3,min_max)
+
+norm_qurey_stats = normalize_stats(query_stats,min_max)
+
+print("norm_stats_doc1 keys:", norm_stats_doc1.keys())
+print("norm_stats_doc1 full:", norm_stats_doc1)
+
+
+stats_vec_norm1 = [norm_stats_doc1["num_tokens"],norm_stats_doc1["vocab_size"],norm_stats_doc1["avg_word_length"],norm_stats_doc1["lexical_diversity"]]
+
+unified_norm_vec1 = tfidf_vec1+stats_vec_norm1
+print("Normalized doc1 stats:", norm_stats_doc1)
+
+unified_norm_vec2 = tfidf_vec2+[
+    norm_stats_doc2["num_tokens"],
+    norm_stats_doc2["vocab_size"],
+    norm_stats_doc2["avg_word_length"],
+    norm_stats_doc2["lexical_diversity"]
+]
+unified_norm_vec3 = tfidf_vec3+[
+    norm_stats_doc3["num_tokens"],
+    norm_stats_doc3["vocab_size"],
+    norm_stats_doc3["avg_word_length"],
+    norm_stats_doc3["lexical_diversity"]
+]
+norm_query_stats_vec = [
+    norm_qurey_stats["num_tokens"],
+    norm_qurey_stats["vocab_size"],
+    norm_qurey_stats["avg_word_length"],
+    norm_qurey_stats["lexical_diversity"]
+]
+
+unified_norm_query_vec = query_vector + norm_query_stats_vec
+
+
+unified_norm_scores = [cosine_similarity(unified_norm_query_vec,unified_norm_vec1)
+,cosine_similarity(unified_norm_query_vec,unified_norm_vec2)
+,cosine_similarity(unified_norm_query_vec,unified_norm_vec3)
+]
+
+print("\n")
+print("ranking files based on qurey(normalized stats)")
+
+doc = 0
+for unified_score in unified_norm_scores:
+        print(f"doc{doc+1} -> {unified_score}")
+        doc = doc+1
